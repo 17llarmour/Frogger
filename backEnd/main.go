@@ -22,7 +22,7 @@ func main() {
 			//}
 			moveCars(round)
 			moveAnimals(round)
-			if round%80 == 0 {
+			if round%60 == 0 {
 				addCars()
 			}
 			if animalsPlaced < 3 && round%5 == 0 { //round%80 == 0 {
@@ -71,6 +71,7 @@ func addCars() {
 func addWaterAnimals() {
 	for i := 5; i > 0; i-- {
 		chance := rand.Intn(3)
+		chance = 1
 		if i%2 == 0 && (chance == 1 || animalsPlaced < 3) {
 			gameGrid[i][0] = strconv.Itoa(i)
 			animalsPlaced += 1
