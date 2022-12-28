@@ -10,6 +10,7 @@ import (
 var gameGrid [][]string
 var frogGrid [][]string
 var lives = 3
+var animalsPlaced = 0
 
 func main() {
 	gameGrid = buildGrid()
@@ -20,8 +21,11 @@ func main() {
 			//	moveCars()
 			//}
 			moveCars(round)
+			moveAnimals(round)
 			if round%80 == 0 {
 				addCars()
+			}
+			if animalsPlaced < 3 && round%5 == 0 { //round%80 == 0 {
 				addWaterAnimals()
 			}
 			printGrid(gameGrid)
@@ -67,16 +71,33 @@ func addCars() {
 func addWaterAnimals() {
 	for i := 5; i > 0; i-- {
 		chance := rand.Intn(3)
-		if i%2 == 0 && chance == 1 {
+		if i%2 == 0 && (chance == 1 || animalsPlaced < 3) {
 			gameGrid[i][0] = strconv.Itoa(i)
-		} else if chance == 1 {
+			animalsPlaced += 1
+		} else if chance == 1 || animalsPlaced < 2 {
 			gameGrid[i][29] = strconv.Itoa(i)
+			animalsPlaced += 1
 		}
+	}
+	if animalsPlaced == 2 {
+		animalsPlaced = 0
 	}
 }
 
-func moveAnimals() {
-
+func moveAnimals(round int) {
+	for i := 5; i > 0; i-- {
+		if round%20 == 0 && i == 5 {
+			moveCarLeft(i)
+		} else if round%15 == 0 && i == 4 {
+			moveCarRight(i)
+		} else if round%10 == 0 && i == 3 {
+			moveCarLeft(i)
+		} else if round%8 == 0 && i == 2 {
+			moveCarRight(i)
+		} else if round%5 == 0 && i == 1 {
+			moveCarLeft(i)
+		}
+	}
 }
 
 func moveCars(round int) {
