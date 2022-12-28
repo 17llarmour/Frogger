@@ -15,10 +15,10 @@ func main() {
 	frogGrid = buildGrid()
 	for {
 		for round := 0; lives > 0; round++ {
-			if round%10 == 0 {
+			if round%20 == 0 {
 				moveCars()
 			}
-			if round%40 == 0 {
+			if round%80 == 0 {
 				addCars()
 			}
 			printGrid(gameGrid)
@@ -92,25 +92,60 @@ func moveCarRight(pos int) {
 
 func moveFrogCheck(direction string, y, x int) bool {
 	if direction == "left" {
-
+		if gameGrid[y][x-1] == " " {
+			return true
+		}
+	}
+	if direction == "right" {
+		if gameGrid[y][x+1] == " " {
+			return true
+		}
+	}
+	if direction == "up" {
+		if gameGrid[y-1][x] == " " {
+			return true
+		}
 	}
 	return true
 }
 
 func moveFrogLeft() {
 	for i := 1; i < 13; i++ {
-		for x := 0; x < 30; x++ {
-			if gameGrid[i][x] == "f" {
-				moveFrogCheck("left", i, x)
+		for x := 1; x < 30; x++ {
+			if i > 5 {
+				if frogGrid[i][x] == "f" && moveFrogCheck("left", i, x) {
+					frogGrid[i][x-1] = frogGrid[i][x]
+					frogGrid[i][x] = " "
+				}
 			}
 		}
 	}
 }
 
 func moveFrogRight() {
-
+	for i := 1; i < 13; i++ {
+		for x := 0; x < 29; x++ {
+			if i > 5 {
+				if frogGrid[i][x] == "f" && moveFrogCheck("right", i, x) {
+					frogGrid[i][x+1] = frogGrid[i][x]
+					frogGrid[i][x] = " "
+				}
+			}
+		}
+	}
 }
 
 func moveFrogUp() {
+	for i := 1; i < 13; i++ {
+		for x := 0; x < 30; x++ {
+			if i > 5 {
+				if frogGrid[i][x] == "f" && moveFrogCheck("up", i, x) {
+					frogGrid[i-1][x] = frogGrid[i][x]
+					frogGrid[i][x] = " "
+				}
+			} else {
 
+			}
+		}
+	}
 }
