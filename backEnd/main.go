@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"strconv"
 	"time"
 )
@@ -15,11 +16,13 @@ func main() {
 	frogGrid = buildGrid()
 	for {
 		for round := 0; lives > 0; round++ {
-			if round%20 == 0 {
-				moveCars()
-			}
+			//if round%20 == 0 {
+			//	moveCars()
+			//}
+			moveCars(round)
 			if round%80 == 0 {
 				addCars()
+				addWaterAnimals()
 			}
 			printGrid(gameGrid)
 			time.Sleep(25 * time.Millisecond)
@@ -52,21 +55,48 @@ func printGrid(grid [][]string) {
 
 func addCars() {
 	for i := 11; i > 6; i-- {
-		if i%2 == 0 {
+		chance := rand.Intn(3)
+		if i%2 == 0 && chance == 1 {
 			gameGrid[i][0] = strconv.Itoa(i)
-		} else {
+		} else if chance == 1 {
 			gameGrid[i][29] = strconv.Itoa(i)
 		}
 	}
 }
 
-func moveCars() {
+func addWaterAnimals() {
+	for i := 5; i > 0; i-- {
+		chance := rand.Intn(3)
+		if i%2 == 0 && chance == 1 {
+			gameGrid[i][0] = strconv.Itoa(i)
+		} else if chance == 1 {
+			gameGrid[i][29] = strconv.Itoa(i)
+		}
+	}
+}
+
+func moveAnimals() {
+
+}
+
+func moveCars(round int) {
 	for i := 11; i > 6; i-- {
-		if i%2 == 0 {
+		if round%20 == 0 && i == 11 {
+			moveCarLeft(i)
+		} else if round%15 == 0 && i == 10 {
 			moveCarRight(i)
-		} else {
+		} else if round%10 == 0 && i == 9 {
+			moveCarLeft(i)
+		} else if round%8 == 0 && i == 8 {
+			moveCarRight(i)
+		} else if round%5 == 0 && i == 7 {
 			moveCarLeft(i)
 		}
+		//if i%2 == 0 {
+		//	moveCarRight(i)
+		//} else {
+		//	moveCarLeft(i)
+		//}
 	}
 }
 
