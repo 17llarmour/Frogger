@@ -133,6 +133,9 @@ func moveCarLeft(pos int) {
 			moveFrogLeft()
 		}
 	}
+	if frogGrid[pos][3] == "f" && gameGrid[pos][3] == " " {
+		frogDeathCars()
+	}
 	if gameGrid[pos][2] != " " {
 		gameGrid[pos][2] = " "
 	}
@@ -147,6 +150,9 @@ func moveCarRight(pos int) {
 		} else if pos < 6 && frogGrid[pos][i-1] == "f" && gameGrid[pos][i] != " " {
 			moveFrogRight()
 		}
+	}
+	if frogGrid[pos][32] == "f" && gameGrid[pos][32] == " " {
+		frogDeathCars()
 	}
 	if gameGrid[pos][33] != " " {
 		gameGrid[pos][33] = " "
@@ -240,9 +246,6 @@ func moveFrogRight() {
 				} else if gameGrid[i][x+1] != " " && frogGrid[i][x] == "f" {
 					frogGrid[i][x+1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
-					if frogGrid[i][32] == "f" && gameGrid[i][32] == " " {
-						frogDeathCars()
-					}
 					return
 				}
 				//local := moveFrogCheckCars("right", i, x)
