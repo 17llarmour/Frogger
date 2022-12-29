@@ -255,7 +255,7 @@ func runServer() {
 	http.HandleFunc("/frogState", getFrogState)
 	http.HandleFunc("/moveFrog", getNewFrog)
 	http.HandleFunc("/info", getInfo)
-	http.HandleFunc("reset", resetCheck)
+	http.HandleFunc("/reset", resetCheck)
 
 	err := http.ListenAndServe(":80", nil)
 	if err != nil {
@@ -268,7 +268,7 @@ func getState(w http.ResponseWriter, r *http.Request) {
 	var localGrid [][]string
 	for i := 0; i < 13; i++ {
 		var tempLine []string
-		for x := 4; x < 33; x++ {
+		for x := 3; x < 33; x++ {
 			tempLine = append(tempLine, gameGrid[i][x])
 		}
 		localGrid = append(localGrid, tempLine)
@@ -285,7 +285,7 @@ func getFrogState(w http.ResponseWriter, r *http.Request) {
 	var localGrid [][]string
 	for i := 0; i < 13; i++ {
 		var tempLine []string
-		for x := 4; x < 33; x++ {
+		for x := 3; x < 33; x++ {
 			tempLine = append(tempLine, frogGrid[i][x])
 		}
 		localGrid = append(localGrid, tempLine)
@@ -328,9 +328,8 @@ func resetCheck(w http.ResponseWriter, r *http.Request) {
 	if reset[0] == "yes" {
 		lives = 3
 		score = 0
-
+		gameGrid = buildGrid()
+		frogGrid = buildGrid()
+		frogGrid[12][17] = "f"
 	}
-	gameGrid = buildGrid()
-	frogGrid = buildGrid()
-	frogGrid[12][14] = "f"
 }
