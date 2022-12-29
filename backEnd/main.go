@@ -245,7 +245,7 @@ func winCheck() {
 
 func frogDeathCars() {
 	lives -= 1
-	time.Sleep(2 * time.Second)
+	//time.Sleep(2 * time.Second)
 	frogGrid = buildGrid()
 	frogGrid[12][14] = "f"
 }

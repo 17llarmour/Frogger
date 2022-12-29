@@ -14,6 +14,7 @@ def newGame():
 
 def moveFrog(direction):
     url = "http://localhost/moveFrog?direction=" + direction
+    print(url)
     frog = requests.post(url)
 
 
@@ -29,8 +30,8 @@ def getStates():
     frogGridTemp = requests.get("http://localhost/frogState")
     gameGrid = json.loads(gameGridTemp.text)
     frogGrid = json.loads(frogGridTemp.text)
-    printGrid(gameGrid)
-    printGrid(frogGrid)
+    #printGrid(gameGrid)
+    #printGrid(frogGrid)
     drawing(gameGrid, frogGrid)
 
 
@@ -50,33 +51,33 @@ def drawing(gameGrid,frogGrid):
 
 
 def drawGrid(grid):
-    for y in range(15):
+    for y in range(13):
         for x in range(30):
             frogImage = None
             if grid[y][x] == "f":
-                frogImage = image.load("").convert()
+                frogImage = image.load("frogForward.png").convert()
             elif grid[y][x] == "bf":
-                frogImage = image.load("").convert()
+                frogImage = image.load("frogBackwards.png").convert()
             elif grid[y][x] == "1":
-                frogImage = image.load("").convert()
+                frogImage = image.load("bug1.png").convert()#Change to log
             elif grid[y][x] == "2":
-                frogImage = image.load("").convert()
+                frogImage = image.load("bug1.png").convert()
             elif grid[y][x] == "3":
-                frogImage = image.load("").convert()
+                frogImage = image.load("bug1.png").convert()#Change to log
             elif grid[y][x] == "4":
-                frogImage = image.load("").convert()
+                frogImage = image.load("bug1.png").convert()
             elif grid[y][x] == "5":
-                frogImage = image.load("").convert()
+                frogImage = image.load("bug1.png").convert() #Change to log
             elif grid[y][x] == "7":
-                frogImage = image.load("").convert()
+                frogImage = image.load("car5.png").convert()
             elif grid[y][x] == "8":
-                frogImage = image.load("").convert()
+                frogImage = image.load("car4.png").convert()
             elif grid[y][x] == "9":
-                frogImage = image.load("").convert()
+                frogImage = image.load("car3.png").convert()
             elif grid[y][x] == "10":
-                frogImage = image.load("").convert()
+                frogImage = image.load("car2.png").convert()
             elif grid[y][x] == "11":
-                frogImage = image.load("").convert()
+                frogImage = image.load("car1.png").convert()
             if frogImage != None:
                 screen.blit(frogImage, (x * 60, y * 60 + 120))
 
@@ -89,7 +90,7 @@ def writeScreen(lives, score):
     screen.blit(img, (1400, 0))
     x = 0
     for i in range(lives):
-        img = image.load("frogDraw.png").convert()
+        img = image.load("frogForward.png").convert()
         screen.blit(img, (1560 + (i * 60 + x), 0))
         x += 20
 
@@ -105,6 +106,8 @@ def endScreen():
 
 if __name__ == '__main__':
     print("running client")
+    score = 0
+    lives = 3
     newGame()
     init()
     width = 1800
