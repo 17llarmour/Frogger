@@ -31,7 +31,7 @@ func main() {
 			if round%80 == 0 {
 				addWaterAnimals()
 			}
-			printGrid(gameGrid)
+			//printGrid(gameGrid)
 			time.Sleep(25 * time.Millisecond)
 		}
 	}
@@ -90,7 +90,6 @@ func moveAnimals(round int) {
 	for i := 5; i > 0; i-- {
 		if round%18 == 0 && i == 5 {
 			moveCarLeft(i)
-
 		} else if round%15 == 0 && i == 4 {
 			moveCarRight(i)
 		} else if round%12 == 0 && i == 3 {
@@ -128,6 +127,11 @@ func moveCarLeft(pos int) {
 	for i := 2; i < 35; i++ {
 		gameGrid[pos][i] = gameGrid[pos][i+1]
 		gameGrid[pos][i+1] = " "
+		if pos > 6 && frogGrid[pos][i+1] == "f" && gameGrid[pos][i+1] != " " {
+			frogDeathCars()
+		} else if pos < 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i] != " " {
+			moveFrogLeft()
+		}
 	}
 	if gameGrid[pos][2] != " " {
 		gameGrid[pos][2] = " "
@@ -138,6 +142,11 @@ func moveCarRight(pos int) {
 	for i := 35; i > 0; i-- {
 		gameGrid[pos][i] = gameGrid[pos][i-1]
 		gameGrid[pos][i-1] = " "
+		if pos > 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i-1] != " " {
+			frogDeathCars()
+		} else if pos < 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i] != " " {
+			moveFrogRight()
+		}
 	}
 	if gameGrid[pos][33] != " " {
 		gameGrid[pos][33] = " "
@@ -153,7 +162,7 @@ func moveFrogCheckCars(direction string, y, x int) bool {
 		if gameGrid[y][x+1] == " " {
 			return true
 		}
-	} else {
+	} else if direction == "up" {
 		if gameGrid[y-1][x] == " " {
 			return true
 		}
@@ -165,16 +174,37 @@ func moveFrogLeft() {
 	for i := 1; i < 13; i++ {
 		for x := 4; x < 33; x++ {
 			if i > 5 {
-				if frogGrid[i][x] == "f" && moveFrogCheckCars("left", i, x) {
+				local := moveFrogCheckCars("left", i, x)
+				if frogGrid[i][x] == "f" && local {
 					frogGrid[i][x-1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
 					return
-				} else if !moveFrogCheckCars("left", i, x) {
+				} else if frogGrid[i][x] == "f" && !local {
 					frogGrid[i][x-1] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
 					return
 				}
+			} else if i > 0 { // if i <= 6 && i > 0 {
+				if gameGrid[i][x-1] == " " && frogGrid[i][x] == "f" {
+					frogGrid[i][x-1] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
+				} else if gameGrid[i][x-1] != " " && frogGrid[i][x] == "f" {
+					frogGrid[i][x-1] = frogGrid[i][x]
+					frogGrid[i][x] = " "
+				}
+				//local := moveFrogCheckCars("left", i, x)
+				//if frogGrid[i][x] == "f" && !local {
+				//	frogGrid[i][x-1] = frogGrid[i][x]
+				//	frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
+				//} else if frogGrid[i][x] == "f" && local {
+				//	frogGrid[i][x-1] = "d"
+				//	frogGrid[i][x] = " "
+				//	frogDeathCars()
+				//	return
+				//}
 			}
 		}
 	}
@@ -184,45 +214,77 @@ func moveFrogRight() {
 	for i := 1; i < 13; i++ {
 		for x := 3; x < 32; x++ {
 			if i > 5 {
-				if frogGrid[i][x] == "f" && moveFrogCheckCars("right", i, x) {
+				local := moveFrogCheckCars("right", i, x)
+				if frogGrid[i][x] == "f" && local {
 					frogGrid[i][x+1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
 					return
-				} else if !moveFrogCheckCars("right", i, x) {
+				} else if frogGrid[i][x] == "f" && !local {
 					frogGrid[i][x+1] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
 					return
 				}
+			} else if i > 0 { // if i <= 6 && i > 0 {
+				if gameGrid[i][x+1] == " " && frogGrid[i][x] == "f" {
+					frogGrid[i][x+1] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
+				} else if gameGrid[i][x+1] != " " && frogGrid[i][x] == "f" {
+					frogGrid[i][x+1] = frogGrid[i][x]
+					frogGrid[i][x] = " "
+				}
+				//local := moveFrogCheckCars("right", i, x)
+				//if frogGrid[i][x] == "f" && !local {
+				//	frogGrid[i][x+1] = frogGrid[i][x]
+				//	frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
+				//} else if frogGrid[i][x] == "f" && local {
+				//	frogGrid[i][x+1] = "d"
+				//	frogGrid[i][x] = " "
+				//	frogDeathCars()
+				//	return
+				//}
 			}
 		}
 	}
 }
 
 func moveFrogUp() {
+	var local bool
 	for i := 0; i < 13; i++ {
 		for x := 3; x < 34; x++ {
-			if i > 5 {
-				if frogGrid[i][x] == "f" && moveFrogCheckCars("up", i, x) {
+			if i > 6 {
+				local = moveFrogCheckCars("up", i, x)
+				if frogGrid[i][x] == "f" && local {
 					frogGrid[i-1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " "
+					score += 10
 					return
-				} else if !moveFrogCheckCars("up", i, x) {
+				} else if frogGrid[i][x] == "f" && !local {
 					frogGrid[i-1][x] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
 					return
 				}
-			} else {
-				if frogGrid[i][x] == "f" && !moveFrogCheckCars("uo", i, x) {
+			} else if i > 0 { // if i <= 6 && i > 0 {
+				local = moveFrogCheckCars("up", i, x)
+				if frogGrid[i][x] == "f" && !local {
 					frogGrid[i-1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
+					score += 10
+				} else if frogGrid[i][x] == "f" && local {
+					frogGrid[i-1][x] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
 				}
 			}
 			if frogGrid[0][x] == "f" {
 				gameGrid[0][x] = "bf"
 				frogGrid[0][x] = " "
 				frogGrid[12][14] = "f"
+				score += 200
 				winCheck()
 
 			}
