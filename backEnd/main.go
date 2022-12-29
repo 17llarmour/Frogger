@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/rand"
+	"net/http"
 	"strconv"
 	"time"
 )
@@ -11,8 +13,10 @@ var gameGrid [][]string
 var sendGrid [][]string
 var frogGrid [][]string
 var lives = 3
+var score = 0
 
 func main() {
+	go runServer()
 	gameGrid = buildGrid()
 	frogGrid = buildGrid()
 	for {
@@ -140,32 +144,36 @@ func moveCarRight(pos int) {
 	}
 }
 
-func moveFrogCheck(direction string, y, x int) bool {
+func moveFrogCheckCars(direction string, y, x int) bool {
 	if direction == "left" {
 		if gameGrid[y][x-1] == " " {
 			return true
 		}
-	}
-	if direction == "right" {
+	} else if direction == "right" {
 		if gameGrid[y][x+1] == " " {
 			return true
 		}
-	}
-	if direction == "up" {
+	} else {
 		if gameGrid[y-1][x] == " " {
 			return true
 		}
 	}
-	return true
+	return false
 }
 
 func moveFrogLeft() {
 	for i := 1; i < 13; i++ {
-		for x := 3; x < 31; x++ {
+		for x := 4; x < 33; x++ {
 			if i > 5 {
-				if frogGrid[i][x] == "f" && moveFrogCheck("left", i, x) {
+				if frogGrid[i][x] == "f" && moveFrogCheckCars("left", i, x) {
 					frogGrid[i][x-1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
+					return
+				} else if !moveFrogCheckCars("left", i, x) {
+					frogGrid[i][x-1] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
 				}
 			}
 		}
@@ -174,11 +182,17 @@ func moveFrogLeft() {
 
 func moveFrogRight() {
 	for i := 1; i < 13; i++ {
-		for x := 0; x < 29; x++ {
+		for x := 3; x < 32; x++ {
 			if i > 5 {
-				if frogGrid[i][x] == "f" && moveFrogCheck("right", i, x) {
+				if frogGrid[i][x] == "f" && moveFrogCheckCars("right", i, x) {
 					frogGrid[i][x+1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
+					return
+				} else if !moveFrogCheckCars("right", i, x) {
+					frogGrid[i][x+1] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
 				}
 			}
 		}
@@ -186,16 +200,129 @@ func moveFrogRight() {
 }
 
 func moveFrogUp() {
-	for i := 1; i < 13; i++ {
-		for x := 0; x < 30; x++ {
+	for i := 0; i < 13; i++ {
+		for x := 3; x < 34; x++ {
 			if i > 5 {
-				if frogGrid[i][x] == "f" && moveFrogCheck("up", i, x) {
+				if frogGrid[i][x] == "f" && moveFrogCheckCars("up", i, x) {
 					frogGrid[i-1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " "
+					return
+				} else if !moveFrogCheckCars("right", i, x) {
+					frogGrid[i-1][x] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
 				}
-			} else {
+			}
+			if frogGrid[0][x] == "f" {
+				gameGrid[0][x] = "bf"
+				frogGrid[0][x] = " "
+				frogGrid[12][14] = "f"
+				winCheck()
 
 			}
 		}
+	}
+
+}
+
+func winCheck() {
+	var total = 0
+	for i := 3; i < 34; i += 6 {
+		if gameGrid[0][i] == "bf" {
+			total += 1
+		}
+	}
+	if total == 5 {
+		score += 1000
+	}
+}
+
+func frogDeathCars() {
+	lives -= 1
+	time.Sleep(2 * time.Second)
+	frogGrid = buildGrid()
+	frogGrid[12][14] = "f"
+}
+
+func runServer() {
+	http.HandleFunc("/state", getState)
+	http.HandleFunc("/frogState", getFrogState)
+	http.HandleFunc("/moveFrog", getNewFrog)
+	http.HandleFunc("/info", getInfo)
+	http.HandleFunc("reset", resetCheck)
+
+	err := http.ListenAndServe(":80", nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func getState(w http.ResponseWriter, r *http.Request) {
+	var localGrid [][]string
+	for i := 0; i < 13; i++ {
+		var tempLine []string
+		for x := 4; x < 33; x++ {
+			tempLine = append(tempLine, gameGrid[i][x])
+		}
+		localGrid = append(localGrid, tempLine)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(localGrid)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func getFrogState(w http.ResponseWriter, r *http.Request) {
+	var localGrid [][]string
+	for i := 0; i < 13; i++ {
+		var tempLine []string
+		for x := 4; x < 33; x++ {
+			tempLine = append(tempLine, frogGrid[i][x])
+		}
+		localGrid = append(localGrid, tempLine)
+	}
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(localGrid)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func getNewFrog(w http.ResponseWriter, r *http.Request) {
+	frogDirection := r.URL.Query()["direction"]
+	if frogDirection[0] == "right" {
+		moveFrogRight()
+	} else if frogDirection[0] == "left" {
+		moveFrogLeft()
+	} else if frogDirection[0] == "up" {
+		moveFrogUp()
+	}
+}
+
+func getInfo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	localLives := strconv.Itoa(lives)
+	localScore := strconv.Itoa(score)
+	write := [2]string{localLives, localScore}
+	err := json.NewEncoder(w).Encode(write)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+}
+
+func resetCheck(w http.ResponseWriter, r *http.Request) {
+	reset := r.URL.Query()["reset"]
+
+	fmt.Println(reset)
+	if reset[0] == "yes" {
+		lives = 3
+		score = 0
+
 	}
 }
