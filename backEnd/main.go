@@ -129,7 +129,7 @@ func moveCarLeft(pos int) {
 		gameGrid[pos][i+1] = " "
 		if pos > 6 && frogGrid[pos][i+1] == "f" && gameGrid[pos][i+1] != " " {
 			frogDeathCars()
-		} else if pos < 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i] != " " {
+		} else if pos < 6 && frogGrid[pos][i+1] == "f" && gameGrid[pos][i] != " " {
 			moveFrogLeft()
 		}
 	}
@@ -144,7 +144,7 @@ func moveCarRight(pos int) {
 		gameGrid[pos][i-1] = " "
 		if pos > 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i-1] != " " {
 			frogDeathCars()
-		} else if pos < 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i] != " " {
+		} else if pos < 6 && frogGrid[pos][i-1] == "f" && gameGrid[pos][i] != " " {
 			moveFrogRight()
 		}
 	}
@@ -171,6 +171,7 @@ func moveFrogCheckCars(direction string, y, x int) bool {
 }
 
 func moveFrogLeft() {
+	//fmt.Println("Move Frog Left")
 	for i := 1; i < 13; i++ {
 		for x := 4; x < 33; x++ {
 			if i > 5 {
@@ -187,13 +188,18 @@ func moveFrogLeft() {
 				}
 			} else if i > 0 { // if i <= 6 && i > 0 {
 				if gameGrid[i][x-1] == " " && frogGrid[i][x] == "f" {
+					//fmt.Println("Unreachable unless you ran off the turtle")
+
 					frogGrid[i][x-1] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
 					return
 				} else if gameGrid[i][x-1] != " " && frogGrid[i][x] == "f" {
+					//fmt.Println("Move Frog Left - Follow that turtle")
+
 					frogGrid[i][x-1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
+					return
 				}
 				//local := moveFrogCheckCars("left", i, x)
 				//if frogGrid[i][x] == "f" && !local {
@@ -234,6 +240,10 @@ func moveFrogRight() {
 				} else if gameGrid[i][x+1] != " " && frogGrid[i][x] == "f" {
 					frogGrid[i][x+1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
+					if frogGrid[i][32] == "f" && gameGrid[i][32] == " " {
+						frogDeathCars()
+					}
+					return
 				}
 				//local := moveFrogCheckCars("right", i, x)
 				//if frogGrid[i][x] == "f" && !local {
