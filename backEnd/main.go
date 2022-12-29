@@ -10,7 +10,6 @@ import (
 )
 
 var gameGrid [][]string
-var sendGrid [][]string
 var frogGrid [][]string
 var lives = 3
 var score = 0
@@ -91,6 +90,7 @@ func moveAnimals(round int) {
 	for i := 5; i > 0; i-- {
 		if round%18 == 0 && i == 5 {
 			moveCarLeft(i)
+
 		} else if round%15 == 0 && i == 4 {
 			moveCarRight(i)
 		} else if round%12 == 0 && i == 3 {
@@ -207,11 +207,16 @@ func moveFrogUp() {
 					frogGrid[i-1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " "
 					return
-				} else if !moveFrogCheckCars("right", i, x) {
+				} else if !moveFrogCheckCars("up", i, x) {
 					frogGrid[i-1][x] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
 					return
+				}
+			} else {
+				if frogGrid[i][x] == "f" && !moveFrogCheckCars("uo", i, x) {
+					frogGrid[i-1][x] = frogGrid[i][x]
+					frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
 				}
 			}
 			if frogGrid[0][x] == "f" {
@@ -325,4 +330,7 @@ func resetCheck(w http.ResponseWriter, r *http.Request) {
 		score = 0
 
 	}
+	gameGrid = buildGrid()
+	frogGrid = buildGrid()
+	frogGrid[12][14] = "f"
 }
