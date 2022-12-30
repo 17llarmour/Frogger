@@ -14,7 +14,6 @@ def newGame():
 
 def moveFrog(direction):
     url = "http://localhost/moveFrog?direction=" + direction
-    # print(url)
     frog = requests.post(url)
 
 

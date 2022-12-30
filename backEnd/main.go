@@ -50,7 +50,6 @@ func buildGrid() [][]string {
 func addWinningPlatforms() {
 	for i := 3; i < 34; i++ {
 		if (i+1)%6 == 0 {
-
 		} else {
 			gameGrid[0][i] = "x"
 		}
@@ -83,7 +82,6 @@ func addWaterAnimals() {
 	for i := 5; i > 0; i-- {
 		chance := rand.Intn(2)
 		fake := rand.Intn(5)
-		//chance = 1
 		if i%2 == 0 && chance == 1 {
 			gameGrid[i][0] = strconv.Itoa(i)
 			gameGrid[i][1] = strconv.Itoa(i)
@@ -188,7 +186,6 @@ func moveFrogCheckCars(direction string, y, x int) bool {
 }
 
 func moveFrogLeft() {
-	//fmt.Println("Move Frog Left")
 	for i := 1; i < 13; i++ {
 		for x := 4; x < 33; x++ {
 			if i > 5 {
@@ -203,17 +200,13 @@ func moveFrogLeft() {
 					frogDeathCars()
 					return
 				}
-			} else if i > 0 { // if i <= 6 && i > 0 {
+			} else if i > 0 {
 				if gameGrid[i][x-1] == " " && frogGrid[i][x] == "f" {
-					//fmt.Println("Unreachable unless you ran off the turtle")
-
 					frogGrid[i][x-1] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
 					return
 				} else if gameGrid[i][x-1] != " " && frogGrid[i][x] == "f" {
-					//fmt.Println("Move Frog Left - Follow that turtle")
-
 					frogGrid[i][x-1] = frogGrid[i][x]
 					frogGrid[i][x] = " "
 					return
@@ -238,7 +231,7 @@ func moveFrogRight() {
 					frogDeathCars()
 					return
 				}
-			} else if i > 0 { // if i <= 6 && i > 0 {
+			} else if i > 0 {
 				if gameGrid[i][x+1] == " " && frogGrid[i][x] == "f" {
 					frogGrid[i][x+1] = "d"
 					frogGrid[i][x] = " "
@@ -271,11 +264,11 @@ func moveFrogUp() {
 					frogDeathCars()
 					return
 				}
-			} else if i > 1 { // if i <= 6 && i > 0 {
+			} else if i > 1 {
 				local = moveFrogCheckCars("up", i, x)
 				if frogGrid[i][x] == "f" && !local && gameGrid[i-1][x] != "-1" {
 					frogGrid[i-1][x] = frogGrid[i][x]
-					frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
+					frogGrid[i][x] = " "
 					score += 10
 				} else if frogGrid[i][x] == "f" && (local || gameGrid[i-1][x] == "-1") {
 					frogGrid[i-1][x] = "d"
@@ -316,13 +309,11 @@ func moveFrogDown() {
 					return
 				}
 			} else if i > 0 {
-				//fmt.Println("Move Down")
 				local = moveFrogCheckCars("down", i, x)
 				if frogGrid[i][x] == "f" && !local && gameGrid[i+1][x] != "-1" {
 					frogGrid[i+1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " "
 					return
-					//fmt.Println("Move Down now") -- issue was no return statement
 				} else if frogGrid[i][x] == "f" && (local || gameGrid[i+1][x] == "-1") {
 					frogGrid[i+1][x] = "d"
 					frogGrid[i][x] = " "
@@ -434,7 +425,6 @@ func getInfo(w http.ResponseWriter, r *http.Request) {
 func resetCheck(w http.ResponseWriter, r *http.Request) {
 	reset := r.URL.Query()["reset"]
 
-	//fmt.Println(reset)
 	if reset[0] == "yes" {
 		lives = 3
 		score = 0
