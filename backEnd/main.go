@@ -273,11 +273,11 @@ func moveFrogUp() {
 				}
 			} else if i > 1 { // if i <= 6 && i > 0 {
 				local = moveFrogCheckCars("up", i, x)
-				if frogGrid[i][x] == "f" && !local {
+				if frogGrid[i][x] == "f" && !local && gameGrid[i-1][x] != "-1" {
 					frogGrid[i-1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
 					score += 10
-				} else if frogGrid[i][x] == "f" && local {
+				} else if frogGrid[i][x] == "f" && (local || gameGrid[i-1][x] == "-1") {
 					frogGrid[i-1][x] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
@@ -318,12 +318,12 @@ func moveFrogDown() {
 			} else if i > 0 {
 				//fmt.Println("Move Down")
 				local = moveFrogCheckCars("down", i, x)
-				if frogGrid[i][x] == "f" && !local {
+				if frogGrid[i][x] == "f" && !local && gameGrid[i+1][x] != "-1" {
 					frogGrid[i+1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " "
 					return
 					//fmt.Println("Move Down now") -- issue was no return statement
-				} else if frogGrid[i][x] == "f" && local {
+				} else if frogGrid[i][x] == "f" && (local || gameGrid[i+1][x] == "-1") {
 					frogGrid[i+1][x] = "d"
 					frogGrid[i][x] = " "
 					frogDeathCars()
@@ -434,7 +434,7 @@ func getInfo(w http.ResponseWriter, r *http.Request) {
 func resetCheck(w http.ResponseWriter, r *http.Request) {
 	reset := r.URL.Query()["reset"]
 
-	fmt.Println(reset)
+	//fmt.Println(reset)
 	if reset[0] == "yes" {
 		lives = 3
 		score = 0
