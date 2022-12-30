@@ -14,7 +14,7 @@ def newGame():
 
 def moveFrog(direction):
     url = "http://localhost/moveFrog?direction=" + direction
-    #print(url)
+    # print(url)
     frog = requests.post(url)
 
 
@@ -30,8 +30,8 @@ def getStates():
     frogGridTemp = requests.get("http://localhost/frogState")
     gameGrid = json.loads(gameGridTemp.text)
     frogGrid = json.loads(frogGridTemp.text)
-    #printGrid(gameGrid)
-    #printGrid(frogGrid)
+    # printGrid(gameGrid)
+    # printGrid(frogGrid)
     drawing(gameGrid, frogGrid)
 
 
@@ -41,9 +41,13 @@ def printGrid(board):
     print("----------SPLIT-----------")
 
 
-def drawing(gameGrid,frogGrid):
+def drawing(gameGrid, frogGrid):
     global lives, score
     screen.fill((0, 0, 0))
+    draw.rect(screen, (0, 255, 0), (0, 900, 1800, 60))
+    draw.rect(screen, (0, 255, 0), (0, 840, 1800, 60))
+    draw.rect(screen, (0, 255, 0), (0, 480, 1800, 60))
+    draw.rect(screen, (0, 0, 255), (0, 180, 1800, 300))
     drawGrid(gameGrid)
     drawGrid(frogGrid)
     writeScreen(lives, score)
@@ -60,16 +64,18 @@ def drawGrid(grid):
                 frogImage = image.load("frogForward.png").convert()
             elif grid[y][x] == "bf":
                 frogImage = image.load("frogBackwards.png").convert()
+            elif grid[y][x] == "-1":
+                frogImage = image.load("fakeBug.png")
             elif grid[y][x] == "1":
-                frogImage = image.load("log.png").convert()#Change to log
+                frogImage = image.load("log.png").convert()  # Change to log
             elif grid[y][x] == "2":
                 frogImage = image.load("log.png").convert()
             elif grid[y][x] == "3":
-                frogImage = image.load("bug1.png").convert()#Change to log
+                frogImage = image.load("bug1.png").convert()  # Change to log
             elif grid[y][x] == "4":
                 frogImage = image.load("log.png").convert()
             elif grid[y][x] == "5":
-                frogImage = image.load("bug1.png").convert() #Change to log
+                frogImage = image.load("bug1.png").convert()  # Change to log
             elif grid[y][x] == "7":
                 frogImage = image.load("car5.png").convert()
             elif grid[y][x] == "8":
