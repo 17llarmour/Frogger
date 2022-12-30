@@ -54,7 +54,9 @@ def drawGrid(grid):
     for y in range(13):
         for x in range(30):
             frogImage = None
-            if grid[y][x] == "f":
+            if grid[y][x] == "x":
+                draw.rect(screen, (0, 255, 0), (x * 60, y * 60 + 120, 60, 60))
+            elif grid[y][x] == "f":
                 frogImage = image.load("frogForward.png").convert()
             elif grid[y][x] == "bf":
                 frogImage = image.load("frogBackwards.png").convert()

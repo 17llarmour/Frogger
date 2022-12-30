@@ -18,11 +18,9 @@ func main() {
 	go runServer()
 	gameGrid = buildGrid()
 	frogGrid = buildGrid()
+	addWinningPlatforms()
 	for {
 		for round := 0; lives > 0; round++ {
-			//if round%20 == 0 {
-			//	moveCars()
-			//}
 			moveCars(round)
 			moveAnimals(round)
 			if round%40 == 0 {
@@ -41,12 +39,22 @@ func buildGrid() [][]string {
 	var tempGrid [][]string
 	for z := 0; z < 13; z++ {
 		var x []string
-		for i := 0; i < 36; i++ { // Space between each item in the array - means the bullet can not collide with anything
+		for i := 0; i < 36; i++ { // Space between each item in the array - means there is definitely space for the frog to go
 			x = append(x, " ")
 		}
 		tempGrid = append(tempGrid, x)
 	}
 	return tempGrid
+}
+
+func addWinningPlatforms() {
+	for i := 3; i < 34; i++ {
+		if (i+1)%6 == 0 {
+
+		} else {
+			gameGrid[0][i] = "x"
+		}
+	}
 }
 
 func printGrid(grid [][]string) {
@@ -115,11 +123,6 @@ func moveCars(round int) {
 		} else if round%5 == 0 && i == 7 {
 			moveCarLeft(i)
 		}
-		//if i%2 == 0 {
-		//	moveCarRight(i)
-		//} else {
-		//	moveCarLeft(i)
-		//}
 	}
 }
 
@@ -127,7 +130,7 @@ func moveCarLeft(pos int) {
 	for i := 2; i < 35; i++ {
 		gameGrid[pos][i] = gameGrid[pos][i+1]
 		gameGrid[pos][i+1] = " "
-		if pos > 6 && frogGrid[pos][i+1] == "f" && gameGrid[pos][i+1] != " " {
+		if pos > 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i] != " " {
 			frogDeathCars()
 		} else if pos < 6 && frogGrid[pos][i+1] == "f" && gameGrid[pos][i] != " " {
 			moveFrogLeft()
@@ -145,7 +148,7 @@ func moveCarRight(pos int) {
 	for i := 35; i > 0; i-- {
 		gameGrid[pos][i] = gameGrid[pos][i-1]
 		gameGrid[pos][i-1] = " "
-		if pos > 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i-1] != " " {
+		if pos > 6 && frogGrid[pos][i] == "f" && gameGrid[pos][i] != " " {
 			frogDeathCars()
 		} else if pos < 6 && frogGrid[pos][i-1] == "f" && gameGrid[pos][i] != " " {
 			moveFrogRight()
@@ -207,16 +210,6 @@ func moveFrogLeft() {
 					frogGrid[i][x] = " "
 					return
 				}
-				//local := moveFrogCheckCars("left", i, x)
-				//if frogGrid[i][x] == "f" && !local {
-				//	frogGrid[i][x-1] = frogGrid[i][x]
-				//	frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
-				//} else if frogGrid[i][x] == "f" && local {
-				//	frogGrid[i][x-1] = "d"
-				//	frogGrid[i][x] = " "
-				//	frogDeathCars()
-				//	return
-				//}
 			}
 		}
 	}
@@ -248,16 +241,6 @@ func moveFrogRight() {
 					frogGrid[i][x] = " "
 					return
 				}
-				//local := moveFrogCheckCars("right", i, x)
-				//if frogGrid[i][x] == "f" && !local {
-				//	frogGrid[i][x+1] = frogGrid[i][x]
-				//	frogGrid[i][x] = " " // for movement with log, check if frog on log, if yes, move with
-				//} else if frogGrid[i][x] == "f" && local {
-				//	frogGrid[i][x+1] = "d"
-				//	frogGrid[i][x] = " "
-				//	frogDeathCars()
-				//	return
-				//}
 			}
 		}
 	}
@@ -280,7 +263,7 @@ func moveFrogUp() {
 					frogDeathCars()
 					return
 				}
-			} else if i > 0 { // if i <= 6 && i > 0 {
+			} else if i > 1 { // if i <= 6 && i > 0 {
 				local = moveFrogCheckCars("up", i, x)
 				if frogGrid[i][x] == "f" && !local {
 					frogGrid[i-1][x] = frogGrid[i][x]
@@ -292,29 +275,35 @@ func moveFrogUp() {
 					frogDeathCars()
 					return
 				}
-			}
-			if frogGrid[0][x] == "f" {
-				gameGrid[0][x] = "bf"
-				frogGrid[0][x] = " "
-				frogGrid[12][14] = "f"
-				score += 200
-				winCheck()
-
+			} else if i == 1 {
+				local = moveFrogCheckCars("up", i, x)
+				if frogGrid[i][x] == "f" && local {
+					frogGrid[i][x] = " "
+					gameGrid[0][x] = "bf"
+					frogGrid[0][x] = " "
+					frogGrid[12][14] = "f"
+					score += 200
+					winCheck()
+					break
+				}
 			}
 		}
 	}
-
 }
 
 func winCheck() {
 	var total = 0
-	for i := 3; i < 34; i += 6 {
+	for i := 5; i < 33; i += 6 {
 		if gameGrid[0][i] == "bf" {
 			total += 1
 		}
 	}
 	if total == 5 {
 		score += 1000
+		gameGrid = buildGrid()
+		frogGrid = buildGrid()
+		addWinningPlatforms()
+		frogGrid[12][14] = "f"
 	}
 }
 
@@ -322,6 +311,7 @@ func frogDeathCars() {
 	lives -= 1
 	//time.Sleep(2 * time.Second)
 	frogGrid = buildGrid()
+	addWinningPlatforms()
 	frogGrid[12][14] = "f"
 }
 
@@ -405,6 +395,7 @@ func resetCheck(w http.ResponseWriter, r *http.Request) {
 		score = 0
 		gameGrid = buildGrid()
 		frogGrid = buildGrid()
+		addWinningPlatforms()
 		frogGrid[12][17] = "f"
 	}
 }
