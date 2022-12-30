@@ -61,13 +61,13 @@ def drawGrid(grid):
             elif grid[y][x] == "bf":
                 frogImage = image.load("frogBackwards.png").convert()
             elif grid[y][x] == "1":
-                frogImage = image.load("bug1.png").convert()#Change to log
+                frogImage = image.load("log.png").convert()#Change to log
             elif grid[y][x] == "2":
-                frogImage = image.load("bug1.png").convert()
+                frogImage = image.load("log.png").convert()
             elif grid[y][x] == "3":
                 frogImage = image.load("bug1.png").convert()#Change to log
             elif grid[y][x] == "4":
-                frogImage = image.load("bug1.png").convert()
+                frogImage = image.load("log.png").convert()
             elif grid[y][x] == "5":
                 frogImage = image.load("bug1.png").convert() #Change to log
             elif grid[y][x] == "7":
