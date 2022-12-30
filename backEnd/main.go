@@ -175,6 +175,10 @@ func moveFrogCheckCars(direction string, y, x int) bool {
 		if gameGrid[y-1][x] == " " {
 			return true
 		}
+	} else if direction == "down" {
+		if gameGrid[y+1][x] == " " {
+			return true
+		}
 	}
 	return false
 }
@@ -291,6 +295,41 @@ func moveFrogUp() {
 	}
 }
 
+func moveFrogDown() {
+	var local bool
+	for i := 0; i < 12; i++ {
+		for x := 3; x < 34; x++ {
+			if i > 4 {
+				local = moveFrogCheckCars("down", i, x)
+				if frogGrid[i][x] == "f" && local {
+					frogGrid[i+1][x] = frogGrid[i][x]
+					frogGrid[i][x] = " "
+					return
+				} else if frogGrid[i][x] == "f" && !local {
+					frogGrid[i+1][x] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
+				}
+			} else if i > 0 {
+				//fmt.Println("Move Down")
+				local = moveFrogCheckCars("down", i, x)
+				if frogGrid[i][x] == "f" && !local {
+					frogGrid[i+1][x] = frogGrid[i][x]
+					frogGrid[i][x] = " "
+					return
+					//fmt.Println("Move Down now") -- issue was no return statement
+				} else if frogGrid[i][x] == "f" && local {
+					frogGrid[i+1][x] = "d"
+					frogGrid[i][x] = " "
+					frogDeathCars()
+					return
+				}
+			}
+		}
+	}
+}
+
 func winCheck() {
 	var total = 0
 	for i := 5; i < 33; i += 6 {
@@ -371,6 +410,8 @@ func getNewFrog(w http.ResponseWriter, r *http.Request) {
 		moveFrogLeft()
 	} else if frogDirection[0] == "up" {
 		moveFrogUp()
+	} else if frogDirection[0] == "down" {
+		moveFrogDown()
 	}
 }
 

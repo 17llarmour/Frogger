@@ -129,6 +129,8 @@ if __name__ == '__main__':
                     moveFrog("right")
                 if e.key == K_UP or e.key == K_SPACE:
                     moveFrog("up")
+                if e.key == K_DOWN:
+                    moveFrog("down")
 
         getStates()
         getInfo()
