@@ -81,15 +81,19 @@ func addCars() {
 
 func addWaterAnimals() {
 	for i := 5; i > 0; i-- {
-		chance := rand.Intn(3)
-		chance = 1
+		chance := rand.Intn(2)
+		fake := rand.Intn(5)
+		//chance = 1
 		if i%2 == 0 && chance == 1 {
 			gameGrid[i][0] = strconv.Itoa(i)
 			gameGrid[i][1] = strconv.Itoa(i)
 			gameGrid[i][2] = strconv.Itoa(i)
-		} else if chance == 1 {
+		} else if chance == 1 && (fake != 1 || i == 1) {
 			gameGrid[i][34] = strconv.Itoa(i)
 			gameGrid[i][35] = strconv.Itoa(i)
+		} else if chance == 1 && fake == 1 && i != 1 {
+			gameGrid[i][34] = "-1"
+			gameGrid[i][35] = "-1"
 		}
 	}
 }
