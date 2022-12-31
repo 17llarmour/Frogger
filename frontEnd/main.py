@@ -115,6 +115,9 @@ if __name__ == '__main__':
     init()
     width = 1800
     height = 960
+    redrawDelay = 60
+    redrawEvent  = USEREVENT + 1
+    time.set_timer(redrawEvent,redrawDelay)
     screen = display.set_mode((width, height))
     assetCollection = loadAssets()
     endProgram = False
@@ -123,8 +126,10 @@ if __name__ == '__main__':
         for e in event.get():
             if e.type == QUIT:
                 endProgram = True
+            if e.type == redrawEvent:
+                getStates()
+                getInfo()
             if e.type == KEYDOWN:
-
                 if e.key == K_LEFT:
                     moveFrog("left")
                 if e.key == K_RIGHT:
@@ -133,9 +138,6 @@ if __name__ == '__main__':
                     moveFrog("up")
                 if e.key == K_DOWN:
                     moveFrog("down")
-
-        getStates()
-        getInfo()
 
         if lives == 0:
             endProgram = True
