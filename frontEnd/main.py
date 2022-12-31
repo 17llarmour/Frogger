@@ -87,16 +87,7 @@ def endScreen():
     t.sleep(3)
 
 
-
-if __name__ == '__main__':
-    print("running client")
-    score = 0
-    lives = 3
-    newGame()
-    init()
-    width = 1800
-    height = 960
-    screen = display.set_mode((width, height))
+def loadAssets():
     assetCollection = {
         "f": image.load("frogForward.png").convert(),
         "bf": image.load("frogBackwards.png").convert(),
@@ -113,6 +104,19 @@ if __name__ == '__main__':
         "11": image.load("car1.png").convert(),
         " ": None
     }
+    return assetCollection
+
+
+if __name__ == '__main__':
+    print("running client")
+    score = 0
+    lives = 3
+    newGame()
+    init()
+    width = 1800
+    height = 960
+    screen = display.set_mode((width, height))
+    assetCollection = loadAssets()
     endProgram = False
     while not endProgram:
         # t.sleep(0.25)
