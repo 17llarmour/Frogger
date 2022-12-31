@@ -59,32 +59,8 @@ def drawGrid(grid):
             frogImage = None
             if grid[y][x] == "x":
                 draw.rect(screen, (0, 255, 0), (x * 60, y * 60 + 120, 60, 60))
-            elif grid[y][x] == "f":
-                frogImage = image.load("frogForward.png").convert()
-            elif grid[y][x] == "bf":
-                frogImage = image.load("frogBackwards.png").convert()
-            elif grid[y][x] == "-1":
-                frogImage = image.load("fakeBug.png")
-            elif grid[y][x] == "1":
-                frogImage = image.load("log.png").convert()  # Change to log
-            elif grid[y][x] == "2":
-                frogImage = image.load("log.png").convert()
-            elif grid[y][x] == "3":
-                frogImage = image.load("bug1.png").convert()  # Change to log
-            elif grid[y][x] == "4":
-                frogImage = image.load("log.png").convert()
-            elif grid[y][x] == "5":
-                frogImage = image.load("bug1.png").convert()  # Change to log
-            elif grid[y][x] == "7":
-                frogImage = image.load("car5.png").convert()
-            elif grid[y][x] == "8":
-                frogImage = image.load("car4.png").convert()
-            elif grid[y][x] == "9":
-                frogImage = image.load("car3.png").convert()
-            elif grid[y][x] == "10":
-                frogImage = image.load("car2.png").convert()
-            elif grid[y][x] == "11":
-                frogImage = image.load("car1.png").convert()
+            else:
+                frogImage = assetCollection[grid[y][x]]
             if frogImage != None:
                 screen.blit(frogImage, (x * 60, y * 60 + 120))
 
@@ -111,6 +87,7 @@ def endScreen():
     t.sleep(3)
 
 
+
 if __name__ == '__main__':
     print("running client")
     score = 0
@@ -120,6 +97,22 @@ if __name__ == '__main__':
     width = 1800
     height = 960
     screen = display.set_mode((width, height))
+    assetCollection = {
+        "f": image.load("frogForward.png").convert(),
+        "bf": image.load("frogBackwards.png").convert(),
+        "-1": image.load("fakeBug.png"),
+        "1": image.load("log.png").convert(),
+        "2": image.load("log.png").convert(),
+        "3": image.load("bug1.png").convert(),
+        "4": image.load("log.png").convert(),
+        "5": image.load("bug1.png").convert(),
+        "7": image.load("car5.png").convert(),
+        "8": image.load("car4.png").convert(),
+        "9": image.load("car3.png").convert(),
+        "10": image.load("car2.png").convert(),
+        "11": image.load("car1.png").convert(),
+        " ": None
+    }
     endProgram = False
     while not endProgram:
         # t.sleep(0.25)
