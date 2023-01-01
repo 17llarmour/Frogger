@@ -270,6 +270,7 @@ func moveFrogUp() {
 					frogGrid[i-1][x] = frogGrid[i][x]
 					frogGrid[i][x] = " "
 					score += 10
+					return
 				} else if frogGrid[i][x] == "f" && (local || gameGrid[i-1][x] == "-1") {
 					frogGrid[i-1][x] = "d"
 					frogGrid[i][x] = " "
@@ -285,7 +286,8 @@ func moveFrogUp() {
 					frogGrid[12][14] = "f"
 					score += 200
 					winCheck()
-					break
+					return
+
 				}
 			}
 		}
