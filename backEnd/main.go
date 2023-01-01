@@ -433,6 +433,6 @@ func resetCheck(w http.ResponseWriter, r *http.Request) {
 		gameGrid = buildGrid()
 		frogGrid = buildGrid()
 		addWinningPlatforms()
-		frogGrid[12][17] = "f"
+		frogGrid[12][14] = "f"
 	}
 }
